@@ -1,0 +1,28 @@
+{% extends "html/base.html" %}
+{% block title %} Register {% endblock %}
+{% block content %}
+    <b> Register new location </b>
+      <form action="register" method="POST">
+      <div>
+      Password:
+         <input type="text" name="secret">
+      </div>
+      <div>
+      Name:
+         <input type="text" name="name"> 
+      </div>
+      <div>
+      Description:
+         <textarea name="description" rows="3" cols="60"></textarea>
+      </div>
+      <div>
+      Valid from:
+         <input type="text" name="valid_from">
+      Valid to:
+         <input type="text" name="valid_to">
+      </div>
+      
+      <div><input type="submit" value="Submit"></div>
+      </form>
+      
+{% endblock %}

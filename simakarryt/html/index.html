@@ -1,0 +1,169 @@
+{% extends "html/base.html" %}
+{% block title %} Main page {% endblock %}
+{% block scripts %} 
+    <style type="text/css">
+      #map-canvas { height: 400px  }
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;key=AIzaSyCTqZtLANXiMrS4P4S-VTzyVIILqeKQJ3k&amp;sensor=true">
+    </script>
+    <script type="text/javascript">
+    
+      var GLOBAL_map;
+      
+      function location_found(position)
+      {
+          var pos = new google.maps.LatLng(position.coords.latitude,
+                                           position.coords.longitude);
+          GLOBAL_map.setCenter( pos );
+      }
+      
+      function location_notfound(err)
+      {
+         if(err.code == 1) 
+         {
+            alert("Error: Access is denied!");
+         } 
+         //else if( err.code == 2) 
+         //{
+         //  alert("Error: Position is unavailable!");
+         //}
+      }
+         
+      function initialize() 
+      {
+        var mapOptions = {              
+          center: new google.maps.LatLng(60.45239, 22.2782),
+          zoom: 14,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+          };
+          
+        GLOBAL_map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+      
+        if(navigator.geolocation) 
+        {
+           navigator.geolocation.getCurrentPosition( location_found, location_notfound );
+        }
+        
+        add_markers();
+      }
+
+     function add_markers()
+     {
+         {% for provider in provider_list %}
+             
+            {% if provider.updates_last %}
+               var marker = new google.maps.Marker({
+                     position: new google.maps.LatLng( {{ provider.updates_last.location.lat }}, {{ provider.updates_last.location.lon }} ),
+                     map: GLOBAL_map,
+                     title: "Tiedot päivitetty : {{ format_date( provider.updates_last.date ) }}",
+                     icon: 
+                     {% if provider.open_now %}
+                        "images/party-marker.png",
+                     {% else %}
+                        "images/no-party-marker.png",
+                     {% endif %}   
+                     clickable: true,
+                     draggable: false
+                     });
+                     
+               google.maps.event.addListener(marker, 'click', function() {
+                   window.location = "comment?thread_id={{ provider.key() }}"; 
+                   });
+                     
+               var last_positions = [
+                     new google.maps.LatLng( {{ provider.updates_last.location.lat }}, {{ provider.updates_last.location.lon }} )
+                 {% for update in provider.updates_list %}
+                   , new google.maps.LatLng( {{ update.location.lat }} , {{ update.location.lon }} )
+                 {% endfor %}   
+                 ];
+               var trace = new google.maps.Polyline({
+                     path: last_positions,
+                     strokeColor: '#DBB8FF',
+                     strokeOpacity: 0.5,
+                     strokeWeight: 2
+                  });
+               trace.setMap(GLOBAL_map);
+            {% endif %}
+         {% endfor %}   
+         
+        {% for image in image_list %}
+               var marker = new google.maps.Marker({
+                     position: new google.maps.LatLng( {{ image.location.lat }}, {{ image.location.lon }} ),
+                     map: GLOBAL_map,
+                     title: "Kuva otettu {{ format_date( image.date ) }} ",
+                     icon: "images/camera-marker.png",
+                     clickable: true,
+                     draggable: false
+                     });
+               google.maps.event.addListener(marker, 'click', function() {
+                   window.location = "comment?image_id={{ image.thread_id  }}"; 
+                   });
+
+        {% endfor %}
+
+         
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+      
+    </script>
+    
+{% endblock %}
+
+{% block content %}
+  
+   
+   <div id="map-canvas"></div>
+   Keltaset on auki ja harmaat ehkä kiinni, kai sä sen snaijjasit. <br>
+   
+   <p>
+   <b> Mestat: </b> 
+   <ul>
+   {% for provider in provider_list %}
+      <li>
+            <a href="/comment?thread_id={{ provider.key() }}"> {{ provider.name }} </a> 
+            - Jakelu: 
+            {{ format_provider_valid( provider ) }}
+      </li>
+   {% endfor %}
+   </ul>
+   </p>
+   
+   <br>
+   <table>
+   {% for comment in comment_list %}
+    <tr>
+      <td>
+         {{ format_date( comment.date ) }} 
+      </td><td>       
+         &lt;
+         {% if comment.author %}
+            <b> {{ comment.author }} </b>
+         {% else %}
+            anonymous 
+         {% endif %}
+         &gt;
+      </td>
+      <td>
+         {{ comment.message|escape }}
+      </td>
+     </tr>
+    {% endfor %}
+    </table>
+    
+   <br>
+<form action="comment?thread_id={{ comment_thread_id }}" method="POST">
+      <div>
+      Mää oon :
+         <input type="text" name="commenter"> 
+      ja mää oon sitä mieltä et :
+      </div>
+      <div>
+         <textarea name="comment" rows="3" cols="60"></textarea>
+      </div>
+      <div><input type="submit" value="Tajuuks!"></div>
+   </form>
+      
+    
+    
+{% endblock %}

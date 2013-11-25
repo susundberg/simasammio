@@ -1,0 +1,53 @@
+
+{% extends "html/base.html" %}
+{% block title %} Comments {% endblock %}
+{% block content %}
+   {% if provider %}
+   <p>
+     <b>   {{ provider.name }}</b><br>
+     Auki: {{ format_provider_valid( provider ) }} <br>
+           {{ provider.desc }}
+      </p>
+   {% endif %}
+   {% if image_url %}
+   <center>
+     <img src="{{ image_url }}">
+   </center>
+   {% endif %}  
+  <br>
+  
+     <form action="comment?{{ post_var }}={{ thread_id }}" method="POST">
+      <div>
+      Mää oon :
+         <input type="text" name="commenter"> 
+      ja mää oon sitä mieltä et :
+      </div>
+      <div>
+         <textarea name="comment" rows="3" cols="60"></textarea>
+      </div>
+      <div><input type="submit" value="Tajuuks!"></div>
+   </form>
+   <br>
+   
+   Muut mölisee: <br>
+   <table border="0">
+   {% for comment in comment_list %}
+    <tr>
+      <td>
+         {{ format_date( comment.date ) }}
+      </td><td>       
+         &lt;
+         {% if comment.author %}
+            <b> {{ comment.author }} </b>
+         {% else %}
+            anonymous 
+         {% endif %}
+         &gt;
+      </td>
+      <td>
+         {{ comment.message|escape }}
+      </td>
+     </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

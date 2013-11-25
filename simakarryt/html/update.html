@@ -1,0 +1,41 @@
+{% extends "html/base.html" %}
+{% block title %} Comments {% endblock %}
+{% block content %}
+   <b> Post a update </b>
+   <form action="update?id={{ id }}" method="POST">
+   
+      <div>
+       Longitude
+         <input type="text" name="long"> 
+      </div>
+      
+      <div>
+       Latitude
+         <input type="text" name="lat"> 
+      </div>
+      
+      <b> DEBUG ITEMS </b>
+      <div>JSON:<input type="text" name="json"> 
+           comments:<input type="text" name="comments">
+           comments_offset:<input type="text" name="comments_offset">       
+      </div>
+      <div><input type="submit" value="Submit"></div>
+   </form>
+      
+   <b> Updates for this provider (latest update {{ format_date( provider.last_update ) }} ): </b> <br>
+   <table border="1">
+   {% for update in update_list %}
+    <tr>
+      <td>
+          {{ format_date( update.date ) }}
+      </td><td>       
+         LAT:  {{ update.location.lat }}
+      </td><td>       
+         LON:  {{ update.location.lon }}
+      </td>
+     </tr>
+    {% endfor %}
+    </table>
+    
+    
+{% endblock %}

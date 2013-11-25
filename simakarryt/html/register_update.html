@@ -1,0 +1,26 @@
+{% extends "html/base.html" %}
+{% block title %} Update location info {% endblock %}
+{% block content %}
+    <b> Register new location </b>
+      <form action="register_update?id={{ id }}" method="POST">
+      <div>
+      Description:
+         <textarea name="description" rows="3" cols="60"></textarea>
+      </div>
+      <div>
+      Valid from:
+         <input type="text" name="valid_from" 
+         {% if provider.valid_from  %} 
+            value="{{ format_date_input( provider.valid_from ) }}"
+         {% endif %}
+         >
+      Valid to:
+         <input type="text" name="valid_to"
+         {% if provider.valid_to  %} 
+            value="{{ format_date_input( provider.valid_to ) }}"
+         {% endif %}
+         >
+      </div>
+      <div><input type="submit" value="Submit"></div>
+      </form>
+{% endblock %}

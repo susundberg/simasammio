@@ -1,0 +1,65 @@
+
+
+  {% macro format_date(date) -%}
+   {{ date.year }}-{{ '%02d' % date.month }}-{{ '%02d' % date.day }} {{ '%02d' % date.hour }}:{{ '%02d' % date.minute }}
+  {%- endmacro %}
+  
+  {% macro format_date_input(date) -%}
+   {{ date.year }}-{{ '%02d' % date.month }}-{{ '%02d' % date.day }} {{ '%02d' % date.hour }}{{ '%02d' % date.minute }}
+  {%- endmacro %}
+  
+  {% macro format_provider_valid (provider) -%}
+         {% if provider.valid_from %}
+             {{ format_date( provider.valid_from ) }}
+         {% else %}
+             varmaan kivikaudelta
+         {% endif %}
+         -
+         {% if provider.valid_to %}
+             {{ format_date( provider.valid_to ) }}
+         {% else %}
+             hamaan ikuisuuteen
+         {% endif %}
+  {%- endmacro %}
+
+
+  
+
+<!DOCTYPE html>
+<head>
+  <title>Simasammio 2103</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Simasammio</title>
+  <link rel="stylesheet" type="text/css" href="stylesheets/main.css"/>
+  <style type="text/css">
+    img {align:middle;}
+  </style>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  
+  {% block scripts %}
+  {% endblock %}
+</head>
+
+<body>
+<center>
+  <div id = "container">
+    <div id ="otsikko">
+      <center>
+      <a href="/"> 
+        <img src="images/banner.png" alt=""/>
+      </a>
+      </center>
+    </div>
+  
+    <div id = "sisalto">
+      {% block content %}
+      {% endblock %}
+      <p>
+        Vuoden 2013 Simasammio-työryhmä on: Otto Urpelainen, Tommi Penttinen ja 
+        Pauli Sundberg. Sivun ulkoasun on hoitanut Jussi Muttilainen.
+      </p>
+    </div>
+  </div>
+</center>
+</body>
+</html>
